@@ -7,6 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.mysql.cj.xdevapi.PreparableStatement;
+
 import static chrisferdev.sql.Conexion.getConexion;
 
 public class EstudianteDAO {
@@ -95,16 +98,82 @@ public class EstudianteDAO {
         return false;
     }
 
+    public boolean modificarEstudiante(Estudiante estudiante) {
+        PreparedStatement ps;
+        Connection con = getConexion();
+        String sql = "UPDATE estudiante SET nombre=?, apellido=?, telefono=?, email=? WHERE id_estudiante =?";
+
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setString(1, estudiante.getNombre());
+            ps.setString(2, estudiante.getApellido());
+            ps.setString(3, estudiante.getTelefono());
+            ps.setString(4, estudiante.getEmail());
+            ps.setInt(5, estudiante.getIdEstudiante());
+            ps.execute();
+            return true;
+        } catch (Exception e) {
+            System.out.println("Error al modificar estudiante: " + e.getMessage());
+        } finally {
+            try {
+                con.close();
+            } catch (Exception e) {
+                System.out.println("Error al cerrar conexion: " + e.getMessage());
+            }
+        }
+        return false;
+    }
+    public boolean eliminarEstudiante(Estudiante estudiante){
+        PreparedStatement ps; 
+        Connection con = getConexion();
+        String sql = "DELETE FROM estudiante WHERE id_estudiante = ?";
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, estudiante.getIdEstudiante());
+            ps.execute();
+            return true;
+        } catch (Exception e) {
+            System.out.println("Error al eliminar estudiante: " + e.getMessage());
+        }
+        finally{
+            try {
+                con.close();
+            } catch (Exception e) {
+                System.out.println("Error al cerrar conexion: " + e.getMessage());
+            }
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         var estudianteDao = new EstudianteDAO();
 
         // Agregar estudiante
-        var nuevoEstudiante = new Estudiante("Christian", "Rojas", "323425", "chris@mail.com");
-        var agregado = estudianteDao.agregarEstudiante(nuevoEstudiante);
-        if (agregado) {
-            System.out.println("Estudiante agregado: " + nuevoEstudiante);
-        } else{
-            System.out.println("No se agregó el estudiante: " + nuevoEstudiante);
+        // var nuevoEstudiante = new Estudiante("Christian", "Rojas", "323425",
+        // "chris@mail.com");
+        // var agregado = estudianteDao.agregarEstudiante(nuevoEstudiante);
+        // if (agregado) {
+        // System.out.println("Estudiante agregado: " + nuevoEstudiante);
+        // } else{
+        // System.out.println("No se agregó el estudiante: " + nuevoEstudiante);
+        // }
+
+        // Modificamos el id (3)
+        // var estudianteModificar = new Estudiante(3, "Natalia", "Ocampo", "4390349", "naty@mail.com");
+        // var modificado = estudianteDao.modificarEstudiante(estudianteModificar);
+        // if (modificado) {
+        //     System.out.println("Estudiante modificado: " + estudianteModificar);
+        // } else {
+        //     System.out.println("No se modifico estudiante: " + estudianteModificar);
+        // }
+
+        // Eliminar estudiante (3)
+        var estudianteEliminar = new Estudiante(3);
+        var eliminado = estudianteDao.eliminarEstudiante(estudianteEliminar);
+        if (eliminado) {
+            System.out.println("Estudiante eliminado: " + estudianteEliminar);
+        }else{
+           System.out.println("No se elimino estudiante: " + estudianteEliminar); 
         }
 
         // Listar los estudiantes
@@ -117,9 +186,10 @@ public class EstudianteDAO {
         // System.out.println("Estudiante antes de la busqueda: " + estudiante1);
         // var encontrado = estudianteDao.buscarEstudiantePorId(estudiante1);
         // if (encontrado) {
-        //     System.out.println("Estudiante encontrado: " + estudiante1);
+        // System.out.println("Estudiante encontrado: " + estudiante1);
         // } else {
-        //     System.out.println("No se encontro estudiante: " + estudiante1.getIdEstudiante());
+        // System.out.println("No se encontro estudiante: " +
+        // estudiante1.getIdEstudiante());
         // }
     }
 }
