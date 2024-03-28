@@ -57,7 +57,7 @@ public class SistemaEstudiantesApp {
             }
             case 3 -> { // Agregar estudiante
                 System.out.println("Agregar Estudiante: ");
-                System.out.print("Nombre: ");
+                System.out.println("Nombre: ");
                 var nombre = consola.nextLine();
                 System.out.println("Apellido: ");
                 var apellido = consola.nextLine();
